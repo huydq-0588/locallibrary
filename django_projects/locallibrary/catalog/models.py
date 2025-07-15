@@ -42,27 +42,37 @@ class Book(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a detail record for this book."""
         return reverse('book-detail', args=[str(self.id)])
+    def display_genre(self):
+        """Create a string for the Genre. This is required to display genre in Admin."""
+        return ', '.join(genre.name for genre in self.genre.all()[:3])
 
 class BookInstance(models.Model):
     """Model representing a specific copy of a book (i.e. that can be borrowed from the library)."""
+    
+    # Loan status constants
+    MAINTENANCE = 'm'
+    ON_LOAN = 'o'
+    AVAILABLE = 'a'
+    RESERVED = 'r'
+    
+    LOAN_STATUS = (
+        (MAINTENANCE, 'Maintenance'),
+        (ON_LOAN, 'On loan'),
+        (AVAILABLE, 'Available'),
+        (RESERVED, 'Reserved'),
+    )
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, 
                          help_text='Unique ID for this particular book across whole library')
     book = models.ForeignKey('Book', on_delete=models.RESTRICT)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
     
-    LOAN_STATUS = (
-        ('m', 'Maintenance'),
-        ('o', 'On loan'),
-        ('a', 'Available'),
-        ('r', 'Reserved'),
-    )
-    
     status = models.CharField(
         max_length=1,
         choices=LOAN_STATUS,
         blank=True,
-        default='m',
+        default=MAINTENANCE,
         help_text='Book availability',
     )
 

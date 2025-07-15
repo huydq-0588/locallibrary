@@ -48,24 +48,31 @@ class Book(models.Model):
 
 class BookInstance(models.Model):
     """Model representing a specific copy of a book (i.e. that can be borrowed from the library)."""
+    
+    # Loan status constants
+    MAINTENANCE = 'm'
+    ON_LOAN = 'o'
+    AVAILABLE = 'a'
+    RESERVED = 'r'
+    
+    LOAN_STATUS = (
+        (MAINTENANCE, 'Maintenance'),
+        (ON_LOAN, 'On loan'),
+        (AVAILABLE, 'Available'),
+        (RESERVED, 'Reserved'),
+    )
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, 
                          help_text='Unique ID for this particular book across whole library')
     book = models.ForeignKey('Book', on_delete=models.RESTRICT)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
     
-    LOAN_STATUS = (
-        ('m', 'Maintenance'),
-        ('o', 'On loan'),
-        ('a', 'Available'),
-        ('r', 'Reserved'),
-    )
-    
     status = models.CharField(
         max_length=1,
         choices=LOAN_STATUS,
         blank=True,
-        default='m',
+        default=MAINTENANCE,
         help_text='Book availability',
     )
 

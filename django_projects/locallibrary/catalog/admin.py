@@ -1,10 +1,8 @@
 from django.contrib import admin
 
 from .models import Author, Book, BookInstance, Genre
-
-
+from .constants import BookInstanceStatus
 # Register your models here.
-
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     """Admin configuration for Genre model."""

@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 import uuid
+from .constants import BookInstanceStatus
 
 class Genre(models.Model):
     name = models.CharField(max_length=200, help_text='Enter a book genre (e.g. Science Fiction)')
@@ -49,19 +50,6 @@ class Book(models.Model):
 class BookInstance(models.Model):
     """Model representing a specific copy of a book (i.e. that can be borrowed from the library)."""
     
-    # Loan status constants
-    MAINTENANCE = 'm'
-    ON_LOAN = 'o'
-    AVAILABLE = 'a'
-    RESERVED = 'r'
-    
-    LOAN_STATUS = (
-        (MAINTENANCE, 'Maintenance'),
-        (ON_LOAN, 'On loan'),
-        (AVAILABLE, 'Available'),
-        (RESERVED, 'Reserved'),
-    )
-    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, 
                          help_text='Unique ID for this particular book across whole library')
     book = models.ForeignKey('Book', on_delete=models.RESTRICT)
@@ -70,9 +58,9 @@ class BookInstance(models.Model):
     
     status = models.CharField(
         max_length=1,
-        choices=LOAN_STATUS,
+        choices=BookInstanceStatus.CHOICES,
         blank=True,
-        default=MAINTENANCE,
+        default=BookInstanceStatus.MAINTENANCE,
         help_text='Book availability',
     )
 

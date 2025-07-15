@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from catalog.models import Book, Author, BookInstance, Genre
+from catalog.constants import BookInstanceStatus
 from django.views import generic
 
 # Create your views here.
@@ -11,9 +12,9 @@ def index(request):
     num_instances = BookInstance.objects.all().count()
     num_authors = Author.objects.count()
     
-    # Available books (using model constant instead of hardcoding)
+    # Available books (using constants from constants module)
     num_instances_available = BookInstance.objects.filter(
-        status__exact=BookInstance.AVAILABLE
+        status__exact=BookInstanceStatus.AVAILABLE
     ).count()
     
     context = {

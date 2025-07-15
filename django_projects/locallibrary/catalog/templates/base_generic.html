@@ -1,16 +1,16 @@
 <!DOCTYPE html>
+{% load i18n %}
+{% load static %}
 <html lang="en">
 <head>
   {% block title %}
-    <title>Local Library</title>
+    <title>{% trans "Local Library" %}</title>
   {% endblock %}
   
   {% block meta %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   {% endblock %}
-  
-  {% load static %}
   
   {% block css %}
     <!-- Bootstrap CSS -->
@@ -33,9 +33,9 @@
           <div class="col-sm-2">
             {% block sidebar %}
               <ul class="sidebar-nav">
-                <li><a href="{% url 'index' %}">Home</a></li>
-                <li><a href="{% url 'books' %}">All books</a></li>
-                <li><a href="">All authors</a></li>
+                <li><a href="{% url 'index' %}">{% trans "Home" %}</a></li>
+                <li><a href="{% url 'books' %}">{% trans "All books" %}</a></li>
+                <li><a href="">{% trans "All authors" %}</a></li>
               </ul>
             {% endblock %}
           </div>
@@ -55,15 +55,17 @@
                 <div class="pagination">
                   <span class="page-links">
                     {% if page_obj.has_previous %}
-                      <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+                      <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">{% trans "previous" %}</a>
                     {% endif %}
                     
                     <span class="page-current">
-                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                      {% blocktrans with page_num=page_obj.number total_pages=page_obj.paginator.num_pages %}
+                        Page {{ page_num }} of {{ total_pages }}.
+                      {% endblocktrans %}
                     </span>
                     
                     {% if page_obj.has_next %}
-                      <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+                      <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">{% trans "next" %}</a>
                     {% endif %}
                   </span>
                 </div>

@@ -111,8 +111,6 @@ LANGUAGE_CODE = 'en-us'
 LANGUAGES = [
     ('en', 'English'),
     ('vi', 'Tiếng Việt'),
-    ('es', 'Español'),
-    ('fr', 'Français'),
 ]
 
 # Path to locale files

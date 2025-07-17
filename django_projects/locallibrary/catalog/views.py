@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from catalog.models import Book, Author, BookInstance, Genre
-from catalog.constants import BookInstanceStatus
+from catalog.constants import BookInstanceStatus, PaginationSettings, ViewSettings
 from django.views import generic
 
 # Create your views here.
@@ -11,8 +11,11 @@ def index(request):
     num_books = Book.objects.all().count()
     num_instances = BookInstance.objects.all().count()
     num_authors = Author.objects.count()
+
+    num_visits = request.session.get('num_visits', 1)
+    request.session['num_visits'] = num_visits + 1
     
-    # Available books (using constants from constants module)
+    # Available books (using constant from constants.py)
     num_instances_available = BookInstance.objects.filter(
         status__exact=BookInstanceStatus.AVAILABLE
     ).count()
@@ -22,14 +25,37 @@ def index(request):
         'num_instances': num_instances,
         'num_authors': num_authors,
         'num_instances_available': num_instances_available,
+        'num_visits': num_visits,
     }
 
-    return render(request, 'index.html', context)
+    return render(request, 'index.html', context=context)
 
 class BookListView(generic.ListView):
     model = Book
-    context_object_name = 'book_list'  # Optional: name for template context
-    paginate_by = 10  # Number of books to display per page
+    context_object_name = ViewSettings.BOOK_LIST_CONTEXT_NAME
+    paginate_by = PaginationSettings.BOOKS_PER_PAGE
 
 class BookDetailView(generic.DetailView):
     model = Book
+
+
+# Example of how to use constants in other views
+class AuthorListView(generic.ListView):
+    """Example view using constants for configuration."""
+    model = Author
+    context_object_name = ViewSettings.AUTHOR_LIST_CONTEXT_NAME
+    paginate_by = PaginationSettings.AUTHORS_PER_PAGE
+    # template_name = ViewSettings.AUTHOR_LIST_TEMPLATE  # Uncomment if using custom template
+
+
+class BookInstanceListView(generic.ListView):
+    """Example view for book instances with filtering by status."""
+    model = BookInstance
+    context_object_name = ViewSettings.BOOK_INSTANCE_LIST_CONTEXT_NAME
+    paginate_by = PaginationSettings.BOOK_INSTANCES_PER_PAGE
+    
+    def get_queryset(self):
+        """Filter available book instances as an example."""
+        return BookInstance.objects.filter(
+            status=BookInstanceStatus.AVAILABLE
+        ).order_by('due_back')

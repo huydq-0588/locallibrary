@@ -5,6 +5,32 @@
   <title>{{ book.title }} - {% trans "Local Library" %}</title>
 {% endblock %}
 
+{% block extra_css %}
+  <style>
+    .book-copies {
+      margin-left: 20px;
+      margin-top: 20px;
+    }
+    
+    .copy-separator {
+      margin: 15px 0;
+    }
+    
+    .copy-status {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .copy-details {
+      margin-bottom: 8px;
+    }
+    
+    .copy-id {
+      font-size: 0.9em;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
   <h1>{% trans "Title:" %} {{ book.title }}</h1>
   
@@ -18,21 +44,25 @@
 
   <p><strong>{% trans "Language:" %}</strong>{{ book.language }}</p>
   
-  <p><strong>{% trans "Genre:" %}</strong> {{ book.genre.all|join:", " }}</p>
+  <p><strong>{% trans "Genre:" %}</strong> 
+    {% for genre in book_genres %}
+      {{ genre.name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
   
-  <div style="margin-left:20px; margin-top:20px">
+  <div class="book-copies">
     <h4>{% trans "Copies" %}</h4>
     
-    {% for copy in book.bookinstance_set.all %}
-      <hr>
-      <p class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'm' %}text-danger{% else %}text-warning{% endif %}">
+    {% for copy in book_instances %}
+      <hr class="copy-separator">
+      <p class="copy-status {% if copy.status == 'a' %}text-success{% elif copy.status == 'm' %}text-danger{% else %}text-warning{% endif %}">
         {{ copy.get_status_display }}
       </p>
       {% if copy.status != 'a' %}
-        <p><strong>{% trans "Due to be returned:" %}</strong> {{ copy.due_back }}</p>
+        <p class="copy-details"><strong>{% trans "Due to be returned:" %}</strong> {{ copy.due_back }}</p>
       {% endif %}
-      <p><strong>{% trans "Imprint:" %}</strong> {{ copy.imprint }}</p>
-      <p class="text-muted"><strong>{% trans "Id:" %}</strong> {{ copy.id }}</p>
+      <p class="copy-details"><strong>{% trans "Imprint:" %}</strong> {{ copy.imprint }}</p>
+      <p class="copy-details copy-id text-muted"><strong>{% trans "Id:" %}</strong> {{ copy.id }}</p>
     {% endfor %}
   </div>
 {% endblock %}

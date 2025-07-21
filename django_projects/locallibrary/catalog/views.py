@@ -51,6 +51,12 @@ class BookDetailView(generic.DetailView):
         # Pass book instances with their status for better performance
         context['book_instances'] = book.bookinstance_set.select_related('borrower').all()
         
+        # Pass status constants to template to avoid hardcoding
+        context['status_available'] = BookInstanceStatus.AVAILABLE
+        context['status_maintenance'] = BookInstanceStatus.MAINTENANCE
+        context['status_on_loan'] = BookInstanceStatus.ON_LOAN
+        context['status_reserved'] = BookInstanceStatus.RESERVED
+        
         return context
 
 

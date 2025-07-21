@@ -33,9 +33,9 @@ class BookInstanceStatus:
     }
 
 
-# Pagination settings
+# Pagination constants
 class PaginationSettings:
-    """Constants for pagination settings across views."""
+    """Constants for pagination settings across the application."""
     DEFAULT_PAGE_SIZE = 10
     BOOKS_PER_PAGE = 10
     AUTHORS_PER_PAGE = 15

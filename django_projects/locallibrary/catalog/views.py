@@ -1,7 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from catalog.models import Book, Author, BookInstance, Genre
 from catalog.constants import BookInstanceStatus, PaginationSettings, ViewSettings
 from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.urls import reverse, reverse_lazy
+
+from catalog.forms import RenewBookForm  # Sửa import path này
+import datetime
 
 # Create your views here.
 def index(request):
@@ -30,6 +39,7 @@ def index(request):
 
     return render(request, 'index.html', context=context)
 
+
 class BookListView(generic.ListView):
     model = Book
     context_object_name = ViewSettings.BOOK_LIST_CONTEXT_NAME
@@ -39,23 +49,60 @@ class BookDetailView(generic.DetailView):
     model = Book
 
 
-# Example of how to use constants in other views
-class AuthorListView(generic.ListView):
-    """Example view using constants for configuration."""
-    model = Author
-    context_object_name = ViewSettings.AUTHOR_LIST_CONTEXT_NAME
-    paginate_by = PaginationSettings.AUTHORS_PER_PAGE
-    # template_name = ViewSettings.AUTHOR_LIST_TEMPLATE  # Uncomment if using custom template
-
-
-class BookInstanceListView(generic.ListView):
-    """Example view for book instances with filtering by status."""
+class BookInstanceListView(LoginRequiredMixin, generic.ListView):
+    """Generic class-based view listing books on loan to current user."""
     model = BookInstance
-    context_object_name = ViewSettings.BOOK_INSTANCE_LIST_CONTEXT_NAME
+    template_name = 'catalog/bookinstance_list_borrowed.html'
+    context_object_name = ViewSettings.BOOK_INSTANCE_CONTEXT_NAME
     paginate_by = PaginationSettings.BOOK_INSTANCES_PER_PAGE
     
     def get_queryset(self):
-        """Filter available book instances as an example."""
         return BookInstance.objects.filter(
-            status=BookInstanceStatus.AVAILABLE
+            borrower=self.request.user,
+            status__exact=BookInstanceStatus.ON_LOAN
         ).order_by('due_back')
+
+
+@login_required
+@permission_required('catalog.can_mark_returned', raise_exception=True)
+def renew_book_librarian(request, pk):
+    """View function for renewing a specific BookInstance by librarian."""
+    book_instance = get_object_or_404(BookInstance, pk=pk)
+    
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+        form = RenewBookForm(request.POST)
+        
+        # Check if the form is valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            book_instance.due_back = form.cleaned_data['renewal_date']
+            book_instance.save()
+            
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('my-borrowed'))
+    
+    # If this is a GET (or any other method) create the default form
+    else:
+        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
+        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date})
+    
+    context = {
+        'form': form,
+        'book_instance': book_instance,
+    }
+    
+    return render(request, 'catalog/book_renew_librarian.html', context)
+
+class AuthorCreate(CreateView):
+    model = Author
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']
+    initial = {'date_of_death':'11/06/2020'}
+
+class AuthorUpdate(UpdateView):
+    model = Author
+    fields = '__all__'
+
+class AuthorDelete(DeleteView):
+    model = Author
+    success_url = reverse_lazy('authors')

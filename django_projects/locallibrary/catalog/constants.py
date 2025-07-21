@@ -33,9 +33,9 @@ class BookInstanceStatus:
     }
 
 
-# Pagination constants
+# Pagination settings
 class PaginationSettings:
-    """Constants for pagination settings across the application."""
+    """Constants for pagination settings across views."""
     DEFAULT_PAGE_SIZE = 10
     BOOKS_PER_PAGE = 10
     AUTHORS_PER_PAGE = 15
@@ -43,16 +43,15 @@ class PaginationSettings:
     MAX_PAGE_SIZE = 100
 
 
-# View constants
+# View settings
 class ViewSettings:
-    """Constants for view configurations."""
-    # Context object names
+    """Constants for view configuration."""
     BOOK_LIST_CONTEXT_NAME = 'book_list'
     AUTHOR_LIST_CONTEXT_NAME = 'author_list'
-    BOOK_INSTANCE_LIST_CONTEXT_NAME = 'bookinstance_list'
+    BOOK_INSTANCE_CONTEXT_NAME = 'bookinstance_list'
     
-    # Template names (if needed for custom templates)
+    # Template names (if needed)
     BOOK_LIST_TEMPLATE = 'catalog/book_list.html'
-    BOOK_DETAIL_TEMPLATE = 'catalog/book_detail.html'
     AUTHOR_LIST_TEMPLATE = 'catalog/author_list.html'
-    AUTHOR_DETAIL_TEMPLATE = 'catalog/author_detail.html'
+    BOOK_INSTANCE_TEMPLATE = 'catalog/bookinstance_list_borrowed.html'
+

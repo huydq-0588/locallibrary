@@ -1,0 +1,30 @@
+{
+  "name": "Django LocalLibrary",
+  "description": "A local library catalog application built with Django",
+  "repository": "https://github.com/huydq-0588/locallibrary",
+  "keywords": ["django", "python", "library", "catalog"],
+  "env": {
+    "SECRET_KEY": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "DEBUG": {
+      "description": "Enable debug mode",
+      "value": "False"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "addons": [
+    "heroku-postgresql:mini"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

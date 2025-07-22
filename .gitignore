@@ -4,33 +4,120 @@ __pycache__/
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
 env/
 venv/
 ENV/
 .venv/
+.env/
+env.bak/
+venv.bak/
 
 # Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-
-# Static files
+media/
 staticfiles/
+static_collected/
 
-# IDE
+# Django migrations (optional - uncomment if you don't want to track migrations)
+# */migrations/*
+# !*/migrations/__init__.py
+
+# Django translations
+*.mo
+*.pot
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Test coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# IDE and editors
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
 
-# OS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Heroku deployment
-staticfiles/
-.env.example
+# Node.js (if using frontend tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+*~
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Security
+*.key
+*.pem
+*.p12
+*.crt
+*.csr
+
+# Local configuration
+local_config.py
+config_local.py

@@ -47,6 +47,27 @@ class BookListView(generic.ListView):
 
 class BookDetailView(generic.DetailView):
     model = Book
+    
+    def get_context_data(self, **kwargs):
+        """Add extra context data to the template."""
+        context = super().get_context_data(**kwargs)
+        
+        # Get the book object
+        book = self.get_object()
+        
+        # Pass genres to avoid database hit in template
+        context['book_genres'] = book.genre.all()
+        
+        # Pass book instances with their status for better performance
+        context['book_instances'] = book.bookinstance_set.select_related('borrower').all()
+        
+        # Pass status constants to template to avoid hardcoding
+        context['status_available'] = BookInstanceStatus.AVAILABLE
+        context['status_maintenance'] = BookInstanceStatus.MAINTENANCE
+        context['status_on_loan'] = BookInstanceStatus.ON_LOAN
+        context['status_reserved'] = BookInstanceStatus.RESERVED
+        
+        return context
 
 
 class BookInstanceListView(LoginRequiredMixin, generic.ListView):
